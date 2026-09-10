@@ -46,7 +46,7 @@ jobs:
       - name: Build and push Docker image
         run: |
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/model-registry
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}
           docker build \
             --build-arg GITHUB_ACTOR=${{ github.actor }} \
             --build-arg FLEXI_COMMON_TOKEN=${{ secrets.FLEXI_COMMON_TOKEN }} \
