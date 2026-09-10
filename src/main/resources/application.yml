@@ -6,17 +6,12 @@ spring:
 
 ---
 # Local development profile
-logging:
-  level:
-    root: INFO
-    com:
-      flexi: DEBUG
-    
 spring:
   config:
     activate:
       on-profile: local
-
+  main:
+    banner-mode: off
   kafka:
     bootstrap-servers: localhost:9093
   cloud:
@@ -54,9 +49,72 @@ spring:
           model-registry:
             url: http://localhost:3001
 
+logging:
+  level:
+    root: INFO
+    com:
+      flexi: DEBUG
+
 server:
   port: 22010
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,bindings
+---
+# Docker profile
+spring:
+  config:
+    activate:
+      on-profile: docker
+  main:
+    banner-mode: off
+  kafka:
+    bootstrap-servers: kafka:9092
+  cloud:
+    function:
+      definition: processing
+    stream:
+      kafka:
+        binder:
+          brokers: kafka:9092
+          producer-properties:
+            key:
+              serializer: org.apache.kafka.common.serialization.StringSerializer
+            value:
+              deserializer: org.apache.kafka.common.serialization.StringDeserializer
+          consumer-properties:
+            key:
+              deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value:
+              deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      bindings:
+        processing-in-0:
+          destination: pipeline.validation
+          group: ${spring.application.name}
+        processing-out-0:
+          destination: pipeline.outcoming
+          producer:
+            useNativeEncoding: false
+        failed-out-0:
+          destination: pipeline.failed
+          producer:
+            useNativeEncoding: false
+    openfeign:
+      client:
+        config:
+          model-registry:
+            url: http://localhost:3001
 
+logging:
+  level:
+    root: INFO
+    com:
+      flexi: DEBUG
+
+server:
+  port: 8080
 management:
   endpoints:
     web:
