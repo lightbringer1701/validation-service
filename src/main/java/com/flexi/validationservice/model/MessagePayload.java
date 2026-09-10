@@ -3,8 +3,7 @@ package com.flexi.validationservice.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 @Data
 @NoArgsConstructor

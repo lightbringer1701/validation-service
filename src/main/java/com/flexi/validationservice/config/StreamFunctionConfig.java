@@ -11,13 +11,14 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flexi.validationservice.exception.ValidationException;
 import com.flexi.validationservice.model.FailedPayload;
 import com.flexi.validationservice.model.MessagePayload;
 import com.flexi.validationservice.service.ProcessingService;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
+import tools.jackson.databind.ObjectMapper;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -42,7 +43,7 @@ public class StreamFunctionConfig {
                 MDC.put("traceId", payload.getTraceId());
                 MDC.put("schemaId", payload.getSchemaId());
                 log.info("Start validate message: key='{}'", key);
-                Set<ValidationMessage> validationMessages = processingService.validate(payload.getSchemaId(),
+                List<Error> validationMessages = processingService.validate(payload.getSchemaId(),
                         payload.getSchemaVersion(), payload.getData());
                 if (validationMessages.isEmpty()) {
                     log.info("Success validate message: key='{}'", key);

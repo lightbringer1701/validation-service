@@ -15,22 +15,16 @@ spring:
   kafka:
     bootstrap-servers: localhost:9093
   cloud:
-    function:
-      definition: processing
     stream:
       kafka:
         binder:
           brokers: localhost:9093
           producer-properties:
-            key:
-              serializer: org.apache.kafka.common.serialization.StringSerializer
-            value:
-              deserializer: org.apache.kafka.common.serialization.StringDeserializer  
+            key.serializer: org.apache.kafka.common.serialization.StringSerializer
+            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
           consumer-properties:
-            key:
-              deserializer: org.apache.kafka.common.serialization.StringDeserializer
-            value:
-              deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
       bindings:
         processing-in-0:
           destination: pipeline.validation
@@ -61,7 +55,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,bindings
+        include: health,info,bindings,metrics,prometheus
 ---
 # Docker profile
 spring:
@@ -73,22 +67,16 @@ spring:
   kafka:
     bootstrap-servers: kafka:9092
   cloud:
-    function:
-      definition: processing
     stream:
       kafka:
         binder:
           brokers: kafka:9092
           producer-properties:
-            key:
-              serializer: org.apache.kafka.common.serialization.StringSerializer
-            value:
-              deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            key.serializer: org.apache.kafka.common.serialization.StringSerializer
+            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
           consumer-properties:
-            key:
-              deserializer: org.apache.kafka.common.serialization.StringDeserializer
-            value:
-              deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
       bindings:
         processing-in-0:
           destination: pipeline.validation
