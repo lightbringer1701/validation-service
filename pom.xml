@@ -27,6 +27,18 @@
 		<tag />
 		<url />
 	</scm>
+
+    <repositories>
+        <repository>
+            <id>mavenCentral</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/lightbringer1701/flexi-common</url>
+        </repository>
+    </repositories>
+
 	<properties>
 		<java.version>25</java.version>
 		<spring-cloud.version>2025.1.2</spring-cloud.version>
@@ -84,6 +96,19 @@
             <artifactId>flexi-common-logging</artifactId>
             <version>0.0.1</version>
         </dependency>
+        <!-- COMMON payload -->
+        <dependency>
+            <groupId>com.flexi</groupId>
+            <artifactId>flexi-common-payload</artifactId>
+            <version>0.0.3</version>
+        </dependency>
+        <!-- COMMON exception -->
+        <dependency>
+            <groupId>com.flexi</groupId>
+            <artifactId>flexi-common-exception</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
 	</dependencies>
 
 	<dependencyManagement>
