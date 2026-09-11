@@ -6,12 +6,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.5</version>
+		<version>4.1.1</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.flexi</groupId>
 	<artifactId>validation-service</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<name>validation-service</name>
 	<description />
 	<url />
@@ -27,9 +27,21 @@
 		<tag />
 		<url />
 	</scm>
+
+    <repositories>
+        <repository>
+            <id>mavenCentral</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/lightbringer1701/flexi-common</url>
+        </repository>
+    </repositories>
+
 	<properties>
-		<java.version>21</java.version>
-		<spring-cloud.version>2024.0.0</spring-cloud.version>
+		<java.version>25</java.version>
+		<spring-cloud.version>2025.1.2</spring-cloud.version>
 	</properties>
 	<dependencies>
 		<!--  Web -->
@@ -66,11 +78,6 @@
 			<groupId>com.github.ben-manes.caffeine</groupId>
 			<artifactId>caffeine</artifactId>
 		</dependency>
-		<!-- Jackson -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-		</dependency>
 		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -81,7 +88,7 @@
 		<dependency>
 			<groupId>com.networknt</groupId>
 			<artifactId>json-schema-validator</artifactId>
-			<version>1.0.87</version>
+            <version>3.0.7</version>
 		</dependency>
 		<!-- Common Logging -->
 		<dependency>
@@ -89,6 +96,19 @@
             <artifactId>flexi-common-logging</artifactId>
             <version>0.0.1</version>
         </dependency>
+        <!-- COMMON payload -->
+        <dependency>
+            <groupId>com.flexi</groupId>
+            <artifactId>flexi-common-payload</artifactId>
+            <version>0.0.3</version>
+        </dependency>
+        <!-- COMMON exception -->
+        <dependency>
+            <groupId>com.flexi</groupId>
+            <artifactId>flexi-common-exception</artifactId>
+            <version>0.0.2</version>
+        </dependency>
+
 	</dependencies>
 
 	<dependencyManagement>

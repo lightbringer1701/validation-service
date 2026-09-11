@@ -1,5 +1,9 @@
 package com.flexi.validationservice.config;
 
+import com.flexi.common.exception.service.ValidationException;
+import com.flexi.common.payload.FailedPayload;
+import com.flexi.common.payload.OutcomingPayload;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,16 +15,14 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flexi.validationservice.exception.ValidationException;
-import com.flexi.validationservice.model.FailedPayload;
-import com.flexi.validationservice.model.MessagePayload;
 import com.flexi.validationservice.service.ProcessingService;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
+import tools.jackson.databind.ObjectMapper;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Configuration
 @RequiredArgsConstructor
@@ -34,31 +36,34 @@ public class StreamFunctionConfig {
     private final StreamBridge streamBridge;
 
     @Bean
-    public Function<Message<String>, Message<String>> processing() {
+    public Function<Message<@NonNull OutcomingPayload>, Message<@NonNull OutcomingPayload>> processing() {
         return message -> {
             String key = (String) message.getHeaders().get(KafkaHeaders.RECEIVED_KEY);
+            OutcomingPayload payload = message.getPayload();
             try {
-                MessagePayload payload = objectMapper.readValue(message.getPayload(), MessagePayload.class);
                 MDC.put("traceId", payload.getTraceId());
                 MDC.put("schemaId", payload.getSchemaId());
                 log.info("Start validate message: key='{}'", key);
-                Set<ValidationMessage> validationMessages = processingService.validate(payload.getSchemaId(),
+
+                List<Error> validationMessages = processingService.validate(payload.getSchemaId(),
                         payload.getSchemaVersion(), payload.getData());
                 if (validationMessages.isEmpty()) {
                     log.info("Success validate message: key='{}'", key);
                 } else {
-                    throw new ValidationException(validationMessages.toString());
+                    throw new ValidationException(buildValidationExceptionMessage(validationMessages));
                 }
+
                 return MessageBuilder
-                        .withPayload(message.getPayload())
+                        .withPayload(payload)
                         .setHeader(KafkaHeaders.KEY, key)
                         .build();
             } catch (Exception e) {
                 log.warn("Failed validate message: key='{}', exceptionClass='{}', exceptionMessage='{}'", key,
-                        e.getClass().getCanonicalName(), e.getLocalizedMessage());
+                        e.getClass().getCanonicalName(), e.getMessage());
                 sendToFailed(new FailedPayload(
+                        payload.getTraceId(),
                         e.getClass().getCanonicalName(),
-                        e.getLocalizedMessage()), key);
+                        e.getMessage()), key);
                 return null;
             } finally {
                 MDC.clear();
@@ -66,9 +71,15 @@ public class StreamFunctionConfig {
         };
     }
 
+    private String buildValidationExceptionMessage(List<Error> validationMessages) {
+        return validationMessages.stream()
+                .map(v -> v.getInstanceLocation() + ": " + v.getMessage())
+                .collect(Collectors.joining("\n"));
+    }
+
     private void sendToFailed(FailedPayload failedPayload, String key) {
         try {
-            Message<String> failedMessage = MessageBuilder
+            Message<@NonNull String> failedMessage = MessageBuilder
                     .withPayload(Objects.requireNonNull(objectMapper.writeValueAsString(failedPayload)))
                     .setHeader(KafkaHeaders.KEY, key)
                     .build();

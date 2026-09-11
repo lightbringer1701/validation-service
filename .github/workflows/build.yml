@@ -30,14 +30,14 @@ jobs:
           GITHUB_ACTOR: ${{ github.actor }}
           FLEXI_COMMON_TOKEN: ${{ secrets.FLEXI_COMMON_TOKEN }}
 
-      - name: Build
-        run: mvn clean package -DskipTests
+      - name: Build & Test
+        run: mvn clean package
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           FLEXI_COMMON_TOKEN: ${{ secrets.FLEXI_COMMON_TOKEN }}
 
       - name: Login to GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -46,11 +46,11 @@ jobs:
       - name: Build and push Docker image
         run: |
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/model-registry
-
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}
           docker build \
-            -t $IMAGE_NAME:$VERSION \
-            -t $IMAGE_NAME:latest .
-
+            --build-arg GITHUB_ACTOR=${{ github.actor }} \
+            --build-arg FLEXI_COMMON_TOKEN=${{ secrets.FLEXI_COMMON_TOKEN }} \
+            --secret id=maven_settings,src=$HOME/.m2/settings.xml \
+            -t $IMAGE_NAME:$VERSION -t $IMAGE_NAME:latest .
           docker push $IMAGE_NAME:$VERSION
           docker push $IMAGE_NAME:latest
