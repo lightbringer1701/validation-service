@@ -5,11 +5,11 @@ import com.networknt.schema.InputFormat;
 import com.networknt.schema.Schema;
 import com.networknt.schema.SchemaRegistry;
 import com.networknt.schema.SpecificationVersion;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 @Slf4j
 @RequiredArgsConstructor
 public class ProcessingService {
-    private final Cache<String, Schema> cache;
+    private final Cache<@NonNull String, Schema> cache;
     private final ModelRegistryClient modelRegistryClient;
 
     private final SchemaRegistry schemaRegistry =

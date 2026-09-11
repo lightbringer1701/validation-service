@@ -21,22 +21,19 @@ spring:
           brokers: localhost:9093
           producer-properties:
             key.serializer: org.apache.kafka.common.serialization.StringSerializer
-            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
           consumer-properties:
             key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
       bindings:
         processing-in-0:
           destination: pipeline.validation
           group: ${spring.application.name}
+          content-type: application/json
         processing-out-0:
           destination: pipeline.outcoming
-          producer:
-            useNativeEncoding: false
+          content-type: application/json
         failed-out-0:
           destination: pipeline.failed
-          producer:
-            useNativeEncoding: false
+          content-type: application/json
     openfeign:
       client:
         config:
@@ -73,33 +70,30 @@ spring:
           brokers: kafka:9092
           producer-properties:
             key.serializer: org.apache.kafka.common.serialization.StringSerializer
-            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
           consumer-properties:
             key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
       bindings:
         processing-in-0:
           destination: pipeline.validation
           group: ${spring.application.name}
+          content-type: application/json
         processing-out-0:
           destination: pipeline.outcoming
-          producer:
-            useNativeEncoding: false
+          content-type: application/json
         failed-out-0:
           destination: pipeline.failed
-          producer:
-            useNativeEncoding: false
+          content-type: application/json
     openfeign:
       client:
         config:
           model-registry:
-            url: http://localhost:3001
+            url: http://model-registry:8080
 
 logging:
   level:
     root: INFO
     com:
-      flexi: DEBUG
+      flexi: INFO
 
 server:
   port: 8080
