@@ -3,10 +3,11 @@ package com.flexi.validationservice.config;
 import com.flexi.common.exception.service.ValidationException;
 import com.flexi.common.payload.FailedPayload;
 import com.flexi.common.payload.OutcomingPayload;
+import com.flexi.validationservice.service.ProcessingService;
+import com.networknt.schema.Error;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.slf4j.MDC;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
@@ -14,9 +15,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
-
-import com.flexi.validationservice.service.ProcessingService;
-import com.networknt.schema.Error;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;

@@ -1,20 +1,15 @@
 package com.flexi.validationservice.service;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.networknt.schema.*;
 import com.networknt.schema.Error;
-import com.networknt.schema.InputFormat;
-import com.networknt.schema.Schema;
-import com.networknt.schema.SchemaRegistry;
-import com.networknt.schema.SpecificationVersion;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import tools.jackson.databind.JsonNode;
 
 import java.util.List;
-
-import org.springframework.stereotype.Service;
-
-import tools.jackson.databind.JsonNode;
-import com.github.benmanes.caffeine.cache.Cache;
 
 @Service
 @Slf4j

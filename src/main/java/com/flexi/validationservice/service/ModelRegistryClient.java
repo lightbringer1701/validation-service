@@ -3,7 +3,6 @@ package com.flexi.validationservice.service;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
 import tools.jackson.databind.JsonNode;
 
 @FeignClient(name = "model-registry")

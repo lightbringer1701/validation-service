@@ -1,10 +1,9 @@
 package com.flexi.validationservice.config;
 
+import feign.RequestInterceptor;
 import org.slf4j.MDC;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import feign.RequestInterceptor;
 
 @Configuration
 public class RegistryInterceptor {
