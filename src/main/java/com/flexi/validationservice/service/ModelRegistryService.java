@@ -22,7 +22,7 @@ public class ModelRegistryService {
     @Retryable(
             retryFor = Exception.class,
             noRetryFor = JsonSchemaNotFoundException.class,
-            maxAttempts = 3,
+            maxAttempts = 5,
             backoff = @Backoff(delay = 200, maxDelay = 5000, multiplier = 2),
             recover = "recover"
     )
