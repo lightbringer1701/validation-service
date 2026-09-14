@@ -122,6 +122,7 @@ class ProcessingServiceTest {
         assertThat(cache.getIfPresent(SCHEMA_ID+":"+VERSION)).isNotNull();
 
         service.validate(SCHEMA_ID, VERSION, invalidDevice);
-        verify(modelRegistryService, times(1)).getSchema(SCHEMA_ID, VERSION);
+        verify(modelRegistryService, times(1))
+                .getSchema(SCHEMA_ID, VERSION);
     }
 }

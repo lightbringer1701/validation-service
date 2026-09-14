@@ -46,34 +46,34 @@ class ModelRegistryServiceTest {
     ObjectMapper objectMapper = new ObjectMapper();
 
     JsonNode expectedDevice = objectMapper.readTree("""
-        {
-          "$schema": "http://json-schema.org/draft-07/schema#",
-          "title": "Device",
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "type": {
-              "type": "string",
-              "enum": [
-                "SERVER",
-                "WORKSTATION",
-                "ROUTER"
-              ]
-            },
-            "ipAddress": {
-              "type": "string"
+            {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "title": "Device",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "SERVER",
+                    "WORKSTATION",
+                    "ROUTER"
+                  ]
+                },
+                "ipAddress": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "type",
+                "ipAddress"
+              ],
+              "additionalProperties": false
             }
-          },
-          "required": [
-            "name",
-            "type",
-            "ipAddress"
-          ],
-          "additionalProperties": false
-        }
-        """);
+            """);
 
     @Test
     void getSchema_shouldReturnSchema() throws Exception {
