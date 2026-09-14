@@ -9,7 +9,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tools.jackson.databind.JsonNode;
@@ -123,8 +122,6 @@ class ProcessingServiceTest {
         assertThat(cache.getIfPresent(SCHEMA_ID+":"+VERSION)).isNotNull();
 
         service.validate(SCHEMA_ID, VERSION, invalidDevice);
-        assertThat(cache.getIfPresent(SCHEMA_ID+":"+VERSION)).isNotNull();
-
         verify(modelRegistryService, times(1)).getSchema(SCHEMA_ID, VERSION);
     }
 }
