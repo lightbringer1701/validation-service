@@ -1,10 +1,9 @@
 package com.flexi.validationservice.config;
 
+import feign.RequestInterceptor;
 import org.slf4j.MDC;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import feign.RequestInterceptor;
 
 @Configuration
 public class RegistryInterceptor {
@@ -13,11 +12,15 @@ public class RegistryInterceptor {
         return template -> {
             String traceId = MDC.get("traceId");
             if (traceId != null) {
-                template.header("X-traceId", traceId);
+                template.header("X-trace-id", traceId);
             }
             String schemaId = MDC.get("schemaId");
-            if (traceId != null) {
-                template.header("X-schemaId", schemaId);
+            if (schemaId != null) {
+                template.header("X-schema-id", schemaId);
+            }
+            String serviceName = "validation-service";
+            if (schemaId != null) {
+                template.header("X-service-name", serviceName);
             }
         };
     }
