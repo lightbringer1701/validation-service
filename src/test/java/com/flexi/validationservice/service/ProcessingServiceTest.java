@@ -125,4 +125,56 @@ class ProcessingServiceTest {
         verify(modelRegistryService, times(1))
                 .getSchema(SCHEMA_ID, VERSION);
     }
+
+
+    @Test
+    void validate_shouldCacheSchemasBySchemaIdAndVersion() throws Exception {
+        when(modelRegistryService.getSchema(anyString(), anyInt()))
+                .thenReturn(deviceSchema);
+
+        service.validate(SCHEMA_ID, VERSION, validDevice);
+        service.validate(SCHEMA_ID, VERSION + 1, validDevice);
+        service.validate(SCHEMA_ID + "-other", VERSION, validDevice);
+
+        verify(modelRegistryService).getSchema(SCHEMA_ID, VERSION);
+        verify(modelRegistryService).getSchema(SCHEMA_ID, VERSION + 1);
+        verify(modelRegistryService).getSchema(SCHEMA_ID + "-other", VERSION);
+        verifyNoMoreInteractions(modelRegistryService);
+    }
+
+    @Test
+    void validate_shouldNotCacheSchemaWhenRegistryFetchFails() throws Exception {
+        when(modelRegistryService.getSchema(SCHEMA_ID, VERSION))
+                .thenThrow(new RuntimeException("Model Registry unavailable"))
+                .thenReturn(deviceSchema);
+
+        org.junit.jupiter.api.Assertions.assertThrows(
+                RuntimeException.class,
+                () -> service.validate(SCHEMA_ID, VERSION, validDevice)
+        );
+
+        List<Error> result = service.validate(SCHEMA_ID, VERSION, validDevice);
+
+        assertEquals(0, result.size());
+        verify(modelRegistryService, times(2)).getSchema(SCHEMA_ID, VERSION);
+    }
+
+    @Test
+    void validate_shouldReturnAllApplicableValidationErrors() throws Exception {
+        when(modelRegistryService.getSchema(SCHEMA_ID, VERSION))
+                .thenReturn(deviceSchema);
+
+        JsonNode invalidDeviceWithSeveralProblems = objectMapper.readTree("""
+                {
+                  "type": "ARM",
+                  "unexpected": true
+                }
+                """);
+
+        List<Error> result = service.validate(
+                SCHEMA_ID, VERSION, invalidDeviceWithSeveralProblems);
+
+        assertThat(result.size()).isGreaterThan(1);
+    }
+
 }
