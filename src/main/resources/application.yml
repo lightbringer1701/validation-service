@@ -1,8 +1,43 @@
 spring:
   application:
     name: validation-service
+  main:
+    banner-mode: off
   profiles:
     active: local
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: ${spring.kafka.bootstrap-servers}
+          producer-properties:
+            key.serializer: org.apache.kafka.common.serialization.StringSerializer
+          consumer-properties:
+            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      bindings:
+        processing-in-0:
+          group: ${spring.application.name}
+          content-type: application/json
+        processing-out-0:
+          content-type: application/json
+        failed-out-0:
+          content-type: application/json
+    openfeign:
+      client:
+        config:
+          model-registry:
+            connectTimeout: 5000
+            readTimeout: 5000
+
+logging:
+  level:
+    root: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,bindings,metrics,prometheus
 
 ---
 # Local development profile
@@ -10,8 +45,6 @@ spring:
   config:
     activate:
       on-profile: local
-  main:
-    banner-mode: off
   kafka:
     bootstrap-servers: localhost:9093
   cloud:
@@ -19,21 +52,13 @@ spring:
       kafka:
         binder:
           brokers: localhost:9093
-          producer-properties:
-            key.serializer: org.apache.kafka.common.serialization.StringSerializer
-          consumer-properties:
-            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
       bindings:
         processing-in-0:
           destination: pipeline.validation
-          group: ${spring.application.name}
-          content-type: application/json
         processing-out-0:
           destination: pipeline.outcoming
-          content-type: application/json
         failed-out-0:
           destination: pipeline.failed
-          content-type: application/json
     openfeign:
       client:
         config:
@@ -42,25 +67,18 @@ spring:
 
 logging:
   level:
-    root: INFO
     com:
       flexi: DEBUG
 
 server:
   port: 22010
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,bindings,metrics,prometheus
+
 ---
 # Docker profile
 spring:
   config:
     activate:
       on-profile: docker
-  main:
-    banner-mode: off
   kafka:
     bootstrap-servers: kafka:9092
   cloud:
@@ -68,21 +86,13 @@ spring:
       kafka:
         binder:
           brokers: kafka:9092
-          producer-properties:
-            key.serializer: org.apache.kafka.common.serialization.StringSerializer
-          consumer-properties:
-            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
       bindings:
         processing-in-0:
           destination: pipeline.validation
-          group: ${spring.application.name}
-          content-type: application/json
         processing-out-0:
           destination: pipeline.outcoming
-          content-type: application/json
         failed-out-0:
           destination: pipeline.failed
-          content-type: application/json
     openfeign:
       client:
         config:
@@ -91,14 +101,8 @@ spring:
 
 logging:
   level:
-    root: INFO
     com:
       flexi: INFO
 
 server:
   port: 8080
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,bindings
