@@ -185,4 +185,48 @@ class StreamFunctionConfigTest {
         assertThat(failedPayload.get("exceptionClass").asString())
                 .isEqualTo("com.flexi.common.exception.registry.JsonSchemaNotFoundException");
     }
+
+
+    @Test
+    void processing_shouldSetAndClearMdcOnSuccess() throws Exception {
+        when(processingService.validate(SCHEMA_ID, VERSION, validDevice))
+                .thenAnswer(invocation -> {
+                    assertThat(MDC.get("traceId")).isEqualTo(expectedPayload.getTraceId());
+                    assertThat(MDC.get("schemaId")).isEqualTo(expectedPayload.getSchemaId());
+                    return List.of();
+                });
+
+        stream.processing().apply(buildMessage(expectedPayload));
+
+        assertThat(MDC.get("traceId")).isNull();
+        assertThat(MDC.get("schemaId")).isNull();
+    }
+
+    @Test
+    void processing_shouldSetAndClearMdcOnFailure() throws Exception {
+        when(processingService.validate(SCHEMA_ID, VERSION, validDevice))
+                .thenAnswer(invocation -> {
+                    assertThat(MDC.get("traceId")).isEqualTo(expectedPayload.getTraceId());
+                    assertThat(MDC.get("schemaId")).isEqualTo(expectedPayload.getSchemaId());
+                    throw new JsonSchemaNotFoundException(SCHEMA_ID, VERSION);
+                });
+
+        stream.processing().apply(buildMessage(expectedPayload));
+
+        assertThat(MDC.get("traceId")).isNull();
+        assertThat(MDC.get("schemaId")).isNull();
+    }
+
+    @Test
+    void processing_shouldPreserveKafkaKeyWhenSendingToFailedBinding() throws Exception {
+        when(processingService.validate(SCHEMA_ID, VERSION, invalidDevice))
+                .thenReturn(unexpectedMessage);
+
+        stream.processing().apply(buildMessage(unexpectedPayload));
+
+        ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
+        verify(streamBridge).send(eq(FAILED_BINDING), captor.capture());
+        assertThat(captor.getValue().getHeaders().get(KafkaHeaders.KEY)).isEqualTo(KEY);
+    }
+
 }
