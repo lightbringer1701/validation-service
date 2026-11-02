@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.flexi</groupId>
 	<artifactId>validation-service</artifactId>
-	<version>0.0.3</version>
+	<version>0.0.4</version>
 	<name>validation-service</name>
 	<description />
 	<url />
@@ -130,18 +130,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- Kafka Test -->
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- WireMock -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-contract-wiremock</artifactId>
             <scope>test</scope>
         </dependency>
 
