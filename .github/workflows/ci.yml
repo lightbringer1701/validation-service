@@ -36,7 +36,7 @@ jobs:
           FLEXI_COMMON_TOKEN: ${{ secrets.FLEXI_COMMON_TOKEN }}
 
       - name: Verify
-        run: ./mvnw -B -ntp clean verify
+        run: chmod +x mvnw && ./mvnw -B -ntp clean verify
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           FLEXI_COMMON_TOKEN: ${{ secrets.FLEXI_COMMON_TOKEN }}
